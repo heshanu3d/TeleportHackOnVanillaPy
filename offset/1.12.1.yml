@@ -1,0 +1,30 @@
+version : "1.12.1"
+exe : "WoW.exe"
+winTitle : "HackWow_1.12.1"
+CurrPosX : 0x00C7B548
+CurrPosY : 0x00C7B544
+CurrPosZ : 0x00C7B54C
+StaticPlayer : 0x00C7BCD4
+AntiJump : 0x7C625F
+JumpGravity : 0x7C6272
+PlayerName : 0xC27D88
+
+PbPointer1 : 0
+PbPointer2 : 0
+PosX : 0
+PosY : 0
+PosZ : 0
+PosR : 0
+SpeedGlobal : 0
+
+autoloot_call : 0x4C1FA0
+Script_LootSlot : 0x4C2E70
+autoloot_2 : 0x4C1ECF
+patch_loot : 0x4C21C0
+patch_loot2 : 0x4C28FF
+patch_lootslot : 0x4C2E94
+luaUnlock : 0x494A57
+
+DstYOffsetArray : [0x88, 0x28, 0x6B4, 0x3C, 0x2C8]
+DstXOffsetArray : [0x88, 0x28, 0x708, 0xC, 0x2A8]
+DstZOffsetArray : [0x88, 0x28, 0x7C8, 0x1A4, 0x54]
