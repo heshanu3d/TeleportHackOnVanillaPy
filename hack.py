@@ -3,8 +3,6 @@ from ctypes import *
 from ctypes import wintypes
 from enum_window import *
 from log import *
-from addr_335 import *
-from functools import wraps
 
 OpenProcess         = windll.kernel32.OpenProcess
 CloseHandle         = windll.kernel32.CloseHandle

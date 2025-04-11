@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
                             QVBoxLayout, QTableWidget, QTableWidgetItem, 
                             QPushButton, QHeaderView)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 
 teleport_list='favlist.fav'
 
@@ -36,10 +37,18 @@ class SpreadsheetTab(QWidget):
         # self.table.setRowCount(1000)
         
         # 设置表头
-        self.table.setHorizontalHeaderLabels(["列1", "列2", "列3", "列4"])
-        
+        self.table.setHorizontalHeaderLabels(["position", "x", "y", "z"])
+        self.table.verticalHeader().setVisible(False)
+
         # 让表头可伸缩
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        total_width = 400
+        col1_width = total_width * 3 // 5  # 第一列占一半
+        other_col_width = total_width * 2 // 15  # 其他三列各占1/6
+        self.table.setColumnWidth(0, col1_width)    # 第一列
+        self.table.setColumnWidth(1, other_col_width)  # 第二列
+        self.table.setColumnWidth(2, other_col_width)  # 第三列
+        self.table.setColumnWidth(3, other_col_width)  # 第四列
 
         # 连接点击信号到槽函数
         self.table.cellClicked.connect(self.on_cell_clicked)
@@ -52,7 +61,7 @@ class SpreadsheetTab(QWidget):
         self.load_data()
         
         # 创建重新加载按钮
-        self.reload_btn = QPushButton("重新加载数据")
+        self.reload_btn = QPushButton("reload")
         self.reload_btn.clicked.connect(self.reload_data)
         
         # 添加部件到布局
@@ -76,7 +85,7 @@ class SpreadsheetTab(QWidget):
                 
                 # 将项目添加到表格
                 self.table.setItem(row, col, item)
-    
+
     def reload_data(self):
         self.table.clearContents()
 
@@ -109,37 +118,32 @@ class SecondTab(QWidget):
         self.setLayout(layout)
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, config, event):
         super().__init__()
+        self.config = config
+        self.event = event
         self.initUI()
         
     def initUI(self):
-        # 设置窗口标题和大小
         self.setWindowTitle('TabView 电子表格示例')
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 400, 800)
+        self.setWindowIcon(QIcon(self.config.icon))
         
-        # 创建主Tab部件
         self.tabs = QTabWidget()
         
-        # 添加第一个标签页（电子表格）
         self.tab1 = SpreadsheetTab()
         self.tabs.addTab(self.tab1, "电子表格")
         
-        # 添加第二个标签页（示例）
         self.tab2 = SecondTab()
         self.tabs.addTab(self.tab2, "其他功能")
         
-        # 设置中心部件
         self.setCentralWidget(self.tabs)
 
-def ui_main():
+def ui_main(config, event=None):
     app = QApplication(sys.argv)
-    mainWin = MainWindow()
+    mainWin = MainWindow(config, event)
     mainWin.show()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    mainWin = MainWindow()
-    mainWin.show()
-    sys.exit(app.exec_())
+    ui_main()

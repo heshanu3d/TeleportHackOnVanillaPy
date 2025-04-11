@@ -2,6 +2,7 @@ import config as cf
 import hack as hk
 from log import *
 from ui import ui_main
+from on_msg import Event
 
 def test(config):
     mgr = hk.HackMgr(config, "D:\\code\\c++\\cmake_test\\build\\main.exe")
@@ -12,7 +13,14 @@ def test(config):
         logger.info(f'set_playername - {ret} - {hack.playername}')
         logger.info(f'{name} - {info}')
 
+def main():
+    config = cf.load_config('offset/1.12.1.yml')
+    mgr = hk.HackMgr(config)
+    event = Event(mgr)
+    ui_main(config, event)
+
 if __name__ == "__main__":
     config = cf.load_config('offset/test.yml')
     test(config)
-    # ui_main()
+
+    main()
