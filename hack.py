@@ -6,8 +6,8 @@ from log import *
 
 OpenProcess         = windll.kernel32.OpenProcess
 CloseHandle         = windll.kernel32.CloseHandle
-ReadProcessMemory   = windll.kernel32.ReadProcessMemory
 WriteProcessMemory  = windll.kernel32.WriteProcessMemory
+ReadProcessMemory   = windll.kernel32.ReadProcessMemory
 
 class HandleHack:
     def __init__(self, handle):
@@ -103,7 +103,7 @@ class HandleHack:
 
     def read_data(self, address, buf):
         bytes_read = ctypes.c_size_t(0)
-        success = ReadProcessMemory(self.handle, ctypes.c_void_p(address), buf, 1, ctypes.byref(bytes_read))
+        success = ReadProcessMemory(self.handle, ctypes.c_void_p(address), buf, ctypes.sizeof(buf), ctypes.byref(bytes_read))
         if not success:
             raise ctypes.WinError(ctypes.get_last_error())
         return buf[0]
@@ -111,13 +111,13 @@ class HandleHack:
     def _wrap_read(self, ctype):
         def wrapper(address):
             buf = (ctype * 1)()
-            return self.read_data(self.handle, address, buf)
+            return self.read_data(address, buf)
         return wrapper
 
     def read_pointer(self, address):
-        if self.is_64bit:
-            return self._wrap_read(ctypes.c_uint64)(address)
-        else:
+        # if self.is_64bit:
+        #     return self._wrap_read(ctypes.c_uint64)(address)
+        # else:
             return self._wrap_read(ctypes.c_uint32)(address)
 
 class Hack():
@@ -156,6 +156,9 @@ class Hack():
             else:
                 return [CurrX, CurrY, CurrZ]
     def set_pos(self, x, y, z):
+        x = float(x)
+        y = float(y)
+        z = float(z)
         hh = self.handle_hack
         config = self.config
         if config.version == "3.3.5":
@@ -171,10 +174,17 @@ class Hack():
             addrZ = config.StaticPlayer
 
             for i in range(len(config.DstXOffsetArray)):
+                # print(hh.read_pointer(addrX))
+                # print(hh.read_pointer(addrY))
+                # print(hh.read_pointer(addrZ))
                 addrX = hh.read_pointer(addrX) + config.DstXOffsetArray[i]
                 addrY = hh.read_pointer(addrY) + config.DstYOffsetArray[i]
                 addrZ = hh.read_pointer(addrZ) + config.DstZOffsetArray[i]
 
+            if config.version == '1.12.1':
+                _x = x
+                x = y
+                y = _x
             hh.write_float(addrX, x)
             hh.write_float(addrY, y)
             hh.write_float(addrZ, z)
@@ -204,7 +214,7 @@ class HackMgr():
             CloseHandle(handle)
     def get_hack(self, name):
         if name in self.hack_infos.keys():
-            return self.hack_infos[name]
+            return self.hack_infos[name][0]
         return None
     def get_hack_infos(self):
         return self.hack_infos

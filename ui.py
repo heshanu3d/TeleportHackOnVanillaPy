@@ -23,10 +23,12 @@ def get_favlist(file="favlist.fav"):
     return out
 
 class SpreadsheetTab(QWidget):
-    def __init__(self):
+    def __init__(self, config, event):
         super().__init__()
         self.initUI()
-        
+        self.config = config
+        self.event = event
+
     def initUI(self):
         # 主布局
         layout = QVBoxLayout()
@@ -51,7 +53,7 @@ class SpreadsheetTab(QWidget):
         self.table.setColumnWidth(3, other_col_width)  # 第四列
 
         # 连接点击信号到槽函数
-        self.table.cellClicked.connect(self.on_cell_clicked)
+        self.table.cellClicked.connect(self.on_cell_single_clicked)
         self.table.cellDoubleClicked.connect(self.on_cell_double_clicked)
 
         # 禁用默认编辑功能
@@ -93,25 +95,19 @@ class SpreadsheetTab(QWidget):
 
         print("数据已重新加载")
 
-    def on_cell_clicked(self, row, column):
-        print(f"点击了第 {row + 1} 行，第 {column + 1} 列")
-        
-        item = self.table.item(row, column)
-        if item is not None:
-            print(f"单元格内容: {item.text()}")
+    def on_cell_single_clicked(self, row, column):
+        self.event.trigger(self.event.cell_single_clicked, self, row, column)
 
     def on_cell_double_clicked(self, row, column):
-        print(f"双击了第 {row + 1} 行，第 {column + 1} 列")
-        
-        item = self.table.item(row, column)
-        if item is not None:
-            print(f"单元格内容: {item.text()}")
+        self.event.trigger(self.event.cell_double_clicked, self, row, column)
 
-class SecondTab(QWidget):
-    def __init__(self):
+class SecondTab(QWidget,):
+    def __init__(self, config, event):
         super().__init__()
         self.initUI()
-        
+        self.config = config
+        self.event = event
+
     def initUI(self):
         layout = QVBoxLayout()
         layout.addWidget(QPushButton("这是第二个标签页"))
@@ -125,17 +121,17 @@ class MainWindow(QMainWindow):
         self.initUI()
         
     def initUI(self):
-        self.setWindowTitle('TabView 电子表格示例')
+        self.setWindowTitle('TeleportOnVanilla')
         self.setGeometry(100, 100, 400, 800)
         self.setWindowIcon(QIcon(self.config.icon))
         
         self.tabs = QTabWidget()
         
-        self.tab1 = SpreadsheetTab()
-        self.tabs.addTab(self.tab1, "电子表格")
+        self.tab1 = SpreadsheetTab(self.config, self.event)
+        self.tabs.addTab(self.tab1, "Teleport")
         
-        self.tab2 = SecondTab()
-        self.tabs.addTab(self.tab2, "其他功能")
+        self.tab2 = SecondTab(self.config, self.event)
+        self.tabs.addTab(self.tab2, "Settings")
         
         self.setCentralWidget(self.tabs)
 

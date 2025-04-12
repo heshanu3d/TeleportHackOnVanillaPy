@@ -20,7 +20,7 @@ def main():
     ui_main(config, event)
 
 if __name__ == "__main__":
-    config = cf.load_config('offset/test.yml')
-    test(config)
+    # config = cf.load_config('offset/test.yml')
+    # test(config)
 
     main()
